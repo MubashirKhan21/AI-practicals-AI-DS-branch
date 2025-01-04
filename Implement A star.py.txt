@@ -1,0 +1,47 @@
+import heapq
+
+class Node:
+    def __init__(self, state, parent=None, action=None, cost=0, heuristic=0):
+        self.state = state
+        self.parent = parent
+        self.action = action
+        self.cost = cost
+        self.heuristic = heuristic
+
+    def total_cost(self):
+        return self.cost + self.heuristic
+
+def a_star_search(initial_state, goal_state, get_neighbors, heuristic):
+    open_set = []
+    heapq.heappush(open_set, (heuristic(initial_state), Node(initial_state, cost=0, heuristic=heuristic(initial_state))))
+
+    while open_set:
+        _, current_node = heapq.heappop(open_set)
+
+        if current_node.state == goal_state:
+            path = []
+            while current_node:
+                path.append((current_node.state, current_node.action))
+                current_node = current_node.parent
+            return list(reversed(path))
+
+        for neighbor, action, cost in get_neighbors(current_node.state):
+            neighbor_node = Node(state=neighbor, parent=current_node, action=action, cost=current_node.cost + cost, heuristic=heuristic(neighbor))
+            heapq.heappush(open_set, (neighbor_node.total_cost(), neighbor_node))
+
+    return None
+
+# Example usage
+def get_neighbors(state):
+    # Implement your function to generate neighboring states along with associated actions and costs
+    pass
+
+def heuristic(state):
+    # Implement your heuristic function that estimates the cost to reach the goal from the given state
+    pass
+
+initial_state = ...
+goal_state = ...
+
+path = a_star_search(initial_state, goal_state, get_neighbors, heuristic)
+print("A* Path:", path)

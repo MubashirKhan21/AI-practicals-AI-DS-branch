@@ -1,0 +1,90 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <unordered_map>
+#include <functional>
+using namespace std;
+
+struct Node {
+    int state;
+    Node* parent;
+    int action;
+    int cost;
+    int heuristic;
+
+    Node(int _state, Node* _parent = nullptr, int _action = -1, int _cost = 0, int _heuristic = 0)
+        : state(_state), parent(_parent), action(_action), cost(_cost), heuristic(_heuristic) {}
+
+    int total_cost() const {
+        return cost + heuristic;
+    }
+};
+
+struct NodeComparator {
+    bool operator()(const Node* a, const Node* b) const {
+        return a->total_cost() > b->total_cost();
+    }
+};
+
+vector<pair<int, int>> a_star_search(int initial_state, int goal_state, function<vector<pair<int, int>>(int)> get_neighbors, function<int(int)> heuristic) {
+    priority_queue<Node*, vector<Node*>, NodeComparator> open_set;
+    open_set.push(new Node(initial_state, nullptr, -1, 0, heuristic(initial_state)));
+
+    unordered_map<int, Node*> visited;
+
+    while (!open_set.empty()) {
+        Node* current_node = open_set.top();
+        open_set.pop();
+
+        if (current_node->state == goal_state) {
+            vector<pair<int, int>> path;
+            while (current_node) {
+                path.emplace_back(current_node->state, current_node->action);
+                current_node = current_node->parent;
+            }
+            return vector<pair<int, int>>(path.rbegin(), path.rend());
+        }
+
+        if (visited.find(current_node->state) != visited.end()) {
+            delete current_node;
+            continue;
+        }
+
+        visited[current_node->state] = current_node;
+
+        for (const auto& neighbor_info : get_neighbors(current_node->state)) {
+            int neighbor = neighbor_info.first;
+            int action = neighbor_info.second;
+            int cost = 1;  // Adjust the cost as needed
+
+            Node* neighbor_node = new Node(neighbor, current_node, action, current_node->cost + cost, heuristic(neighbor));
+            open_set.push(neighbor_node);
+        }
+    }
+
+    return vector<pair<int, int>>();
+}
+
+int main() {
+    // Example usage
+    auto get_neighbors = [](int state) -> vector<pair<int, int>> {
+        // Implement your function to generate neighboring states along with associated actions and costs
+        return vector<pair<int, int>>();
+    };
+
+    auto heuristic = [](int state) -> int {
+        // Implement your heuristic function that estimates the cost to reach the goal from the given state
+        return 0;
+    };
+
+    int initial_state = ...;
+    int goal_state = ...;
+
+    vector<pair<int, int>> path = a_star_search(initial_state, goal_state, get_neighbors, heuristic);
+    cout << "A* Path:" << endl;
+    for (const auto& step : path) {
+        cout << "State: " << step.first << ", Action: " << step.second << endl;
+    }
+
+    return 0;
+}

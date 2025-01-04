@@ -1,0 +1,37 @@
+def alpha_beta_search(state, depth, alpha, beta, is_maximizing):
+    if depth == 0 or is_terminal(state):
+        return evaluate(state)
+    
+    if is_maximizing:
+        value = float('-inf')
+        for child_state in get_children(state):
+            value = max(value, alpha_beta_search(child_state, depth - 1, alpha, beta, False))
+            alpha = max(alpha, value)
+            if alpha >= beta:
+                break
+        return value
+    else:
+        value = float('inf')
+        for child_state in get_children(state):
+            value = min(value, alpha_beta_search(child_state, depth - 1, alpha, beta, True))
+            beta = min(beta, value)
+            if alpha >= beta:
+                break
+        return value
+
+def alpha_beta_decision(state):
+    best_value = float('-inf')
+    best_action = None
+    for action in get_actions(state):
+        new_state = apply_action(state, action)
+        value = alpha_beta_search(new_state, depth, float('-inf'), float('inf'), False)
+        if value > best_value:
+            best_value = value
+            best_action = action
+    return best_action
+
+# Example usage
+initial_state = ...
+depth = ...
+best_action = alpha_beta_decision(initial_state)
+print("Best action:", best_action)

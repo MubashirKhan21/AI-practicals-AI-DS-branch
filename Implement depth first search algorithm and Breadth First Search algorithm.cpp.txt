@@ -1,0 +1,77 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+class Graph {
+public:
+    Graph(int vertices) : vertices(vertices) {
+        adjacency_list.resize(vertices);
+    }
+
+    void add_edge(int u, int v) {
+        adjacency_list[u].push_back(v);
+        adjacency_list[v].push_back(u);
+    }
+
+    void dfs_recursive(int vertex, vector<bool>& visited) {
+        visited[vertex] = true;
+        cout << vertex << " ";
+
+        for (int neighbor : adjacency_list[vertex]) {
+            if (!visited[neighbor]) {
+                dfs_recursive(neighbor, visited);
+            }
+        }
+    }
+
+    void dfs(int start_vertex) {
+        vector<bool> visited(vertices, false);
+        dfs_recursive(start_vertex, visited);
+    }
+
+    void bfs(int start_vertex) {
+        vector<bool> visited(vertices, false);
+        queue<int> q;
+        q.push(start_vertex);
+        visited[start_vertex] = true;
+
+        while (!q.empty()) {
+            int vertex = q.front();
+            q.pop();
+            cout << vertex << " ";
+
+            for (int neighbor : adjacency_list[vertex]) {
+                if (!visited[neighbor]) {
+                    q.push(neighbor);
+                    visited[neighbor] = true;
+                }
+            }
+        }
+    }
+
+private:
+    int vertices;
+    vector<vector<int>> adjacency_list;
+};
+
+int main() {
+    Graph g(6);
+    g.add_edge(0, 1);
+    g.add_edge(0, 2);
+    g.add_edge(1, 3);
+    g.add_edge(2, 4);
+    g.add_edge(2, 5);
+
+    int start_vertex = 0;
+
+    cout << "Depth First Traversal:" << endl;
+    g.dfs(start_vertex);
+    cout << endl;
+
+    cout << "Breadth First Traversal:" << endl;
+    g.bfs(start_vertex);
+    cout << endl;
+
+    return 0;
+}

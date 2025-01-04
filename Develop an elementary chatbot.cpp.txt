@@ -1,0 +1,50 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <ctime>
+#include <cstdlib>
+
+std::string get_response(const std::string& input_text) {
+    std::string input = input_text;
+    std::transform(input.begin(), input.end(), input.begin(), ::tolower);
+
+    std::vector<std::string> greetings = {"hello", "hi", "hey", "howdy"};
+    std::map<std::string, std::string> responses = {
+        {"hello", "Hello there! How can I assist you?"},
+        {"how are you", "I'm just a chatbot, but I'm here to help!"},
+        {"goodbye", "Goodbye! Feel free to ask if you have more questions."},
+        {"default", "I'm not sure how to respond to that."}
+    };
+
+    for (const std::string& word : greetings) {
+        if (input.find(word) != std::string::npos) {
+            return responses[word];
+        }
+    }
+
+    for (const auto& pair : responses) {
+        if (input.find(pair.first) != std::string::npos) {
+            return pair.second;
+        }
+    }
+
+    return responses["default"];
+}
+
+int main() {
+    std::cout << "Chatbot: Hello! How can I help you today?" << std::endl;
+    while (true) {
+        std::string user_input;
+        std::cout << "You: ";
+        std::getline(std::cin, user_input);
+        if (user_input == "exit") {
+            std::cout << "Chatbot: Goodbye!" << std::endl;
+            break;
+        }
+        std::string response = get_response(user_input);
+        std::cout << "Chatbot: " << response << std::endl;
+    }
+
+    return 0;
+}

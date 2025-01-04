@@ -1,0 +1,32 @@
+import random
+
+def get_response(input_text):
+    input_text = input_text.lower()
+
+    greetings = ["hello", "hi", "hey", "howdy"]
+    responses = {
+        "hello": "Hello there! How can I assist you?",
+        "how are you": "I'm just a chatbot, but I'm here to help!",
+        "goodbye": "Goodbye! Feel free to ask if you have more questions.",
+        "default": "I'm not sure how to respond to that."
+    }
+
+    for word in greetings:
+        if word in input_text:
+            return random.choice(responses[word])
+
+    for key in responses:
+        if key in input_text:
+            return responses[key]
+
+    return responses["default"]
+
+# Example interaction
+print("Chatbot: Hello! How can I help you today?")
+while True:
+    user_input = input("You: ")
+    if user_input.lower() == "exit":
+        print("Chatbot: Goodbye!")
+        break
+    response = get_response(user_input)
+    print("Chatbot:", response)
